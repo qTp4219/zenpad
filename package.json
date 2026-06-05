@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint .",
     "clean": "next clean",
-    "deploy:gh-pages": "npm run build && touch out/.nojekyll && gh-pages -d out -t true",
+    "deploy:gh-pages": "npm run build && touch out/.nojekyll && gh-pages -d out -t",
     "electron:dev": "cross-env NODE_ENV=development concurrently -k \"cross-env BROWSER=none npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
     "electron:build": "npm run build && electron-builder"
   },

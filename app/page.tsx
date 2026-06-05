@@ -17,6 +17,7 @@ export default function ZenPad() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isPlainTextMode, setIsPlainTextMode] = useState(false);
 
   // Load notes from local storage on mount
   useEffect(() => {
@@ -198,31 +199,70 @@ export default function ZenPad() {
       )}
 
       {/* Main Editor Area */}
-      <div className="flex-1 overflow-auto relative flex justify-center bg-[#1e2227]">
-        {!isSidebarOpen && (
-          <button
-            onClick={() => setIsSidebarOpen(true)}
-            className="absolute top-4 left-4 z-50 p-2 bg-[#2c313a] text-[#abb2bf] rounded-md hover:bg-[#3e4451] hover:text-white transition-colors shadow-md border border-[#181a1f]"
-            title="Open Sidebar"
-          >
-            <PanelLeftOpen className="w-4 h-4" />
-          </button>
-        )}
-        {activeNote ? (
-          <div className="w-full max-w-3xl pt-8 pb-32">
-             <MarkdownEditor
-               key={activeNote.id}
-               markdown={activeNote.content}
-               onChange={updateActiveNoteContent}
-             />
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center text-[#5c6370] h-full">
-            <FileText className="w-16 h-16 mb-4 opacity-50" />
-            <p className="text-lg font-medium">No note selected</p>
-            <p className="text-sm mt-1">Select a note from the sidebar or create a new one.</p>
-          </div>
-        )}
+      <div className="flex-1 flex flex-col bg-[#1e2227] h-full overflow-hidden relative">
+        {/* Editor Toolbar/Header */}
+        <div className="h-12 shrink-0 border-b border-[#181a1f] bg-[#21252b] flex items-center justify-between px-4 z-10">
+           <div className="flex items-center">
+             {!isSidebarOpen && (
+               <button
+                 onClick={() => setIsSidebarOpen(true)}
+                 className="p-1.5 mr-3 bg-[#2c313a] text-[#abb2bf] rounded-md hover:bg-[#3e4451] hover:text-white transition-colors border border-[#181a1f]"
+                 title="Open Sidebar"
+               >
+                 <PanelLeftOpen className="w-4 h-4" />
+               </button>
+             )}
+             <span className="text-sm font-medium text-[#abb2bf]">
+                {activeNote?.title || ''}
+             </span>
+           </div>
+           
+           {activeNote && (
+             <div className="flex items-center space-x-1 border bg-[#181a1f] border-[#181a1f] rounded-md p-0.5">
+                <button
+                  onClick={() => setIsPlainTextMode(false)}
+                  className={`px-3 py-1 text-xs font-medium rounded-sm transition-all ${!isPlainTextMode ? 'bg-[#3e4451] text-white shadow-sm' : 'text-[#5c6370] hover:text-[#abb2bf] hover:bg-[#2c313a]'}`}
+                >
+                  Rich
+                </button>
+                <button
+                  onClick={() => setIsPlainTextMode(true)}
+                  className={`px-3 py-1 text-xs font-medium rounded-sm transition-all ${isPlainTextMode ? 'bg-[#3e4451] text-white shadow-sm' : 'text-[#5c6370] hover:text-[#abb2bf] hover:bg-[#2c313a]'}`}
+                >
+                  Raw MD
+                </button>
+             </div>
+           )}
+        </div>
+
+        <div className="flex-1 overflow-auto relative flex justify-center">
+          {activeNote ? (
+            <div className="w-full max-w-3xl pt-8 pb-32 px-4 sm:px-8">
+               {isPlainTextMode ? (
+                 <textarea
+                   key={`textarea-${activeNote.id}`}
+                   autoFocus
+                   value={activeNote.content}
+                   onChange={(e) => updateActiveNoteContent(e.target.value)}
+                   className="w-full h-full min-h-[calc(100vh-200px)] bg-transparent text-[#abb2bf] font-mono text-[15px] leading-relaxed resize-none focus:outline-none placeholder:text-[#5c6370]"
+                   placeholder="Type your markdown here..."
+                 />
+               ) : (
+                 <MarkdownEditor
+                   key={activeNote.id}
+                   markdown={activeNote.content}
+                   onChange={updateActiveNoteContent}
+                 />
+               )}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center text-[#5c6370] h-full w-full">
+              <FileText className="w-16 h-16 mb-4 opacity-50" />
+              <p className="text-lg font-medium">No note selected</p>
+              <p className="text-sm mt-1">Select a note from the sidebar or create a new one.</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
