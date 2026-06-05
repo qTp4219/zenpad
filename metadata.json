@@ -1,6 +1,0 @@
-{
-  "name": "ZenPad",
-  "description": "Minimalist WYSIWYG Markdown Notepad with Sublime Text aesthetic",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
